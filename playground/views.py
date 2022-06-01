@@ -1,5 +1,5 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
 
 
 def hello(request):
-    return HttpResponse('Hello World')
+    return render(request, 'playground/index.html')
