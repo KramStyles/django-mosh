@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # PERSONAL APPS
+    'playground.apps.PlaygroundConfig',
+
     # PIP INSTALLS
     'rest_framework',
     'drf_yasg',
