@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<h1>Hello and welcome to Code with Mosh</h1>
+<h3>Specific orders</h3>
+<ol>
+    {% for item in spec %}
+        <li>{{ item.title }}
+            <ul>
+                <li>{{ item.description }}</li>
+                <li>{{ item.price }}</li>
+
+            </ul>
+        </li>
+    {% endfor %}
+
+</ol>
+<h3>All Users</h3>
+<ol>
+    {% for customer in customers %}
+        <li>{{ customer.first_name }} {{ customer.last_name }}</li>
+    {% endfor %}
+</ol>
+
+</body>
+</html>
