@@ -8,6 +8,20 @@
 </head>
 <body>
 <h1>Hello and welcome to Code with Mosh</h1>
+<h3>Specific orders</h3>
+<ol>
+    {% for item in spec %}
+        <li>{{ item.title }}
+            <ul>
+                <li>{{ item.description }}</li>
+                <li>{{ item.price }}</li>
+
+            </ul>
+        </li>
+    {% endfor %}
+
+</ol>
+<h3>All Users</h3>
 <ol>
     {% for customer in customers %}
         <li>{{ customer.first_name }} {{ customer.last_name }}</li>
