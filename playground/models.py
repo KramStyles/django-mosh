@@ -3,6 +3,14 @@ from django.db import models
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
+    # An error occurs here. The '+' tells django not to create a reverse
+    # relationship between Collection and Product
+    featured_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, related_name='+')
+
+
+class Promotion(models.Model):
+    description = models.CharField(max_length=255)
+    discount = models.FloatField()
 
 
 class Product(models.Model):
@@ -12,6 +20,7 @@ class Product(models.Model):
     inventory = models.IntegerField()
     updated_at = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
+    promotions = models.ManyToManyField(Promotion)
 
 
 class Customer(models.Model):
@@ -26,7 +35,7 @@ class Customer(models.Model):
     email = models.EmailField(max_length=100, unique=True)
     phone = models.CharField(max_length=30)
     birthdate = models.DateTimeField(null=True)
-    membership = models.CharField(choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_CHOICES[0][0])
+    membership = models.CharField(max_length=20, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_CHOICES[0][0])
 
 
 class Order(models.Model):
@@ -37,7 +46,7 @@ class Order(models.Model):
     ]
 
     placed_at = models.DateTimeField(auto_now_add=True)
-    payment_status = models.CharField(choices=PAYMENT_CHOICES, default=PAYMENT_CHOICES[0][0])
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default=PAYMENT_CHOICES[0][0])
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
 
