@@ -7,6 +7,12 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Hello and welcome to Code with Mosh</h1>
+<h1>Hello and welcome to Code with Mosh</h1>
+<ol>
+    {% for customer in customers %}
+        <li>{{ customer.first_name }} {{ customer.last_name }}</li>
+    {% endfor %}
+</ol>
+
 </body>
 </html>
