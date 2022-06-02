@@ -15,6 +15,7 @@ class Promotion(models.Model):
 
 class Product(models.Model):
     title = models.CharField(max_length=200)
+    slug = models.SlugField(null=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
     inventory = models.IntegerField()
@@ -37,6 +38,12 @@ class Customer(models.Model):
     birthdate = models.DateTimeField(null=True)
     membership = models.CharField(max_length=20, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_CHOICES[0][0])
 
+    class Meta:
+        db_table = 'store_customers'
+        indexes = [
+            models.Index(fields=['last_name', 'first_name'])
+        ]
+
 
 class Order(models.Model):
     PAYMENT_CHOICES = [
@@ -53,6 +60,7 @@ class Order(models.Model):
 class Address(models.Model):
     street = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
+    zip = models.CharField(max_length=100, null=True)
     # Set primary key to prevent a one to many field because django will create an id
     customer = models.OneToOneField(Customer, on_delete=models.CASCADE, primary_key=True)
 
