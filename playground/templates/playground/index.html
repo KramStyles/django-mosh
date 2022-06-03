@@ -11,7 +11,7 @@
 <h3>Specific orders</h3>
 <ol>
     {% for item in spec %}
-        <li>{{ item.title }}
+        <li>{{ item.title }} {{ item.collection }}
             <ul>
                 <li>{{ item.description }}</li>
                 <li>{{ item.price }}</li>
