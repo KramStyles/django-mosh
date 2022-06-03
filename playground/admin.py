@@ -1,3 +1,8 @@
-# from django.contrib import admin
+from django.contrib import admin
 
-# Register your models here.
+from . import models
+
+admin.site.site_header = "Playground Store"
+admin.site.index_title = "E-commerce"
+
+admin.site.register(models.Collection)
