@@ -9,6 +9,9 @@ class Collection(models.Model):
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        ordering = ['title']
 
 
 class Promotion(models.Model):
@@ -31,6 +34,9 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ['title']
 
 
 class Customer(models.Model):

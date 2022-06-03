@@ -6,3 +6,4 @@ admin.site.site_header = "Playground Store"
 admin.site.index_title = "E-commerce"
 
 admin.site.register(models.Collection)
+admin.site.register(models.Product)
