@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from rest_framework import decorators, response, status
 
 from .models import Customer, Product, OrderItem
+from . import serializers
 
 
 def hello(request):
@@ -24,3 +26,17 @@ def hello(request):
     }
 
     return render(request, 'playground/index.html', context)
+
+
+@decorators.api_view()
+def product_list(request):
+    product = Product.objects.all()
+    serializer = serializers.ProductSerializer(product, many=True)
+    return response.Response(serializer.data)
+
+
+@decorators.api_view()
+def product_detail(request, _id):
+    product = get_object_or_404(Product, pk=_id)
+    serializer = serializers.ProductSerializer(product)
+    return response.Response(serializer.data, status=status.HTTP_200_OK)
