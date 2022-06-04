@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import decorators, response, status
 
 from .models import Customer, Product, OrderItem
@@ -35,9 +35,6 @@ def product_list(request):
 
 @decorators.api_view()
 def product_detail(request, _id):
-    try:
-        product = Product.objects.get(pk=_id)
-        serializer = serializers.ProductSerializer(product)
-        return response.Response(serializer.data, status=status.HTTP_200_OK)
-    except Product.DoesNotExist:
-        return response.Response(status=status.HTTP_404_NOT_FOUND)
+    product = get_object_or_404(Product, pk=_id)
+    serializer = serializers.ProductSerializer(product)
+    return response.Response(serializer.data, status=status.HTTP_200_OK)
