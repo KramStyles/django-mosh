@@ -1,3 +1,4 @@
+from django.core import validators
 from django.db import models
 
 
@@ -9,7 +10,7 @@ class Collection(models.Model):
 
     def __str__(self):
         return self.title
-    
+
     class Meta:
         ordering = ['title']
 
@@ -26,11 +27,11 @@ class Product(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(null=True)
     description = models.TextField()
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=6, decimal_places=2, validators=[validators.MinValueValidator(1)])
     inventory = models.IntegerField()
     updated_at = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
-    promotions = models.ManyToManyField(Promotion)
+    promotions = models.ManyToManyField(Promotion, blank=True)
 
     def __str__(self):
         return self.title
