@@ -7,10 +7,19 @@ class Collection(models.Model):
     # relationship between Collection and Product
     featured_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, related_name='+')
 
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        ordering = ['title']
+
 
 class Promotion(models.Model):
     description = models.CharField(max_length=255)
     discount = models.FloatField()
+
+    def __str__(self):
+        return self.description
 
 
 class Product(models.Model):
@@ -22,6 +31,12 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
     promotions = models.ManyToManyField(Promotion)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['title']
 
 
 class Customer(models.Model):
@@ -37,6 +52,9 @@ class Customer(models.Model):
     phone = models.CharField(max_length=30)
     birthdate = models.DateTimeField(null=True)
     membership = models.CharField(max_length=20, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_CHOICES[0][0])
+
+    def __str__(self):
+        return self.email
 
 
 class Order(models.Model):
@@ -57,6 +75,9 @@ class Address(models.Model):
     zip = models.CharField(max_length=100, null=True)
     # Set primary key to prevent a one to many field because django will create an id
     customer = models.OneToOneField(Customer, on_delete=models.CASCADE, primary_key=True)
+
+    def __str__(self):
+        return self.city
 
 
 class OrderItem(models.Model):
