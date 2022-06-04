@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import decorators, response
 
 from .models import Customer, Product, OrderItem
 
@@ -24,3 +25,13 @@ def hello(request):
     }
 
     return render(request, 'playground/index.html', context)
+
+
+@decorators.api_view()
+def product_list(request):
+    return response.Response('hello')
+
+
+@decorators.api_view()
+def product_detail(request):
+    return response.Response('hi')
