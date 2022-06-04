@@ -1,9 +1,11 @@
 from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count, QuerySet
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
 
 from . import models
+from tags.models import TaggedItem
 
 admin.site.site_header = "Playground Store"
 admin.site.index_title = "E-commerce"
@@ -21,6 +23,15 @@ class InventoryFilter(admin.SimpleListFilter):
             return queryset.filter(inventory__lt=10)
 
 
+class TagInline(GenericTabularInline):
+    """
+    Trying to display inline features for Tags
+    """
+    autocomplete_fields = ['tag']
+    extra = 1
+    model = TaggedItem
+
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     actions = ['clear_inventory', 'make_low']
@@ -29,6 +40,8 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         'slug': ['title']
     }
+    inlines = [TagInline]
+
     list_display = ['title', 'price', 'inventory_status', 'collection']
     list_editable = ['price']
     list_per_page = 30
@@ -91,6 +104,3 @@ class OrderAdmin(admin.ModelAdmin):
     list_per_page = 15
     autocomplete_fields = ['customer']  # This worked because it had a search field in the customer admin]
     inlines = [OrderItemInline]
-
-# admin.site.register(models.Collection)
-# admin.site.register(models.Product, ProductAdmin)
