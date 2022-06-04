@@ -82,6 +82,6 @@ class CollectionAdmin(admin.ModelAdmin):
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     list_per_page = 15
-    autocomplete_fields = ['customer']  # This worked because it had a search field in the customer admin 
+    autocomplete_fields = ['customer']  # This worked because it had a search field in the customer admin
 # admin.site.register(models.Collection)
 # admin.site.register(models.Product, ProductAdmin)
