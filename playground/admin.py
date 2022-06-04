@@ -34,6 +34,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 30
     # list_filter = ['collection', InventoryFilter]
     list_filter = ['collection']
+    search_fields = ['title']
 
     @admin.display(ordering='inventory')
     def inventory_status(self, product):
@@ -79,9 +80,17 @@ class CollectionAdmin(admin.ModelAdmin):
         )
 
 
+class OrderItemInline(admin.TabularInline):
+    model = models.OrderItem
+    autocomplete_fields = ['product']
+    extra = 2
+
+
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     list_per_page = 15
-    autocomplete_fields = ['customer']  # This worked because it had a search field in the customer admin
+    autocomplete_fields = ['customer']  # This worked because it had a search field in the customer admin]
+    inlines = [OrderItemInline]
+
 # admin.site.register(models.Collection)
 # admin.site.register(models.Product, ProductAdmin)
