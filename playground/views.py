@@ -33,5 +33,5 @@ def product_list(request):
 
 
 @decorators.api_view()
-def product_detail(request):
-    return response.Response('hi')
+def product_detail(request, _id):
+    return response.Response('Hi: '+str(_id))
