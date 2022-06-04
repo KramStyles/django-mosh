@@ -1,5 +1,4 @@
 from django.contrib import admin, messages
-from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count, QuerySet
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
@@ -23,14 +22,6 @@ class InventoryFilter(admin.SimpleListFilter):
             return queryset.filter(inventory__lt=10)
 
 
-class TagInline(GenericTabularInline):
-    """
-    Trying to display inline features for Tags
-    """
-    autocomplete_fields = ['tag']
-    extra = 1
-    model = TaggedItem
-
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -40,7 +31,6 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         'slug': ['title']
     }
-    inlines = [TagInline]
 
     list_display = ['title', 'price', 'inventory_status', 'collection']
     list_editable = ['price']
