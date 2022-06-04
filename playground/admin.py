@@ -24,6 +24,11 @@ class InventoryFilter(admin.SimpleListFilter):
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     actions = ['clear_inventory', 'make_low']
+    autocomplete_fields = ['collection']  # This would generate an error on its own unless you enable its class
+    # To automatically populate the slug field
+    prepopulated_fields = {
+        'slug': ['title']
+    }
     list_display = ['title', 'price', 'inventory_status', 'collection']
     list_editable = ['price']
     list_per_page = 30
@@ -40,7 +45,7 @@ class ProductAdmin(admin.ModelAdmin):
     def clear_inventory(self, request, queryset: QuerySet):
         updated_count = queryset.update(inventory=0)
         self.message_user(request, f'Your actions ({updated_count}) have been carried out!', messages.ERROR)
-        
+
     @admin.action(description='Make Inventory Low')
     def make_low(self, request, queryset: QuerySet):
         updated_count = queryset.update(inventory=15)
@@ -60,6 +65,7 @@ class CustomerAdmin(admin.ModelAdmin):
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):
     list_display = ['title', 'products_count']
+    search_fields = ['title']  # This was included to stop error in the autocomplete field of product admin
 
     @admin.display(ordering='products_count')
     def products_count(self, collection):
@@ -72,5 +78,10 @@ class CollectionAdmin(admin.ModelAdmin):
             products_count=Count('product')
         )
 
+
+@admin.register(models.Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_per_page = 15
+    autocomplete_fields = ['customer']  # This worked because it had a search field in the customer admin 
 # admin.site.register(models.Collection)
 # admin.site.register(models.Product, ProductAdmin)
