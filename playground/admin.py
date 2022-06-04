@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.html import format_html, urlencode
 
 from . import models
-from tags.models import TaggedItem
+
 
 admin.site.site_header = "Playground Store"
 admin.site.index_title = "E-commerce"
@@ -20,7 +20,6 @@ class InventoryFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset: QuerySet):
         if self.value() == '<10':
             return queryset.filter(inventory__lt=10)
-
 
 
 @admin.register(models.Product)

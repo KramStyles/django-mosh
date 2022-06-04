@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from rest_framework import decorators, response
+from rest_framework import decorators, response, status
 
 from .models import Customer, Product, OrderItem
+from . import serializers
 
 
 def hello(request):
@@ -34,4 +35,6 @@ def product_list(request):
 
 @decorators.api_view()
 def product_detail(request, _id):
-    return response.Response('Hi: '+str(_id))
+    product = Product.objects.get(pk=_id)
+    serializer = serializers.ProductSerializer(product)
+    return response.Response(serializer.data, status=status.HTTP_200_OK)
