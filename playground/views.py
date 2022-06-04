@@ -35,6 +35,9 @@ def product_list(request):
 
 @decorators.api_view()
 def product_detail(request, _id):
-    product = Product.objects.get(pk=_id)
-    serializer = serializers.ProductSerializer(product)
-    return response.Response(serializer.data, status=status.HTTP_200_OK)
+    try:
+        product = Product.objects.get(pk=_id)
+        serializer = serializers.ProductSerializer(product)
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
+    except Product.DoesNotExist:
+        return response.Response(status=status.HTTP_404_NOT_FOUND)
