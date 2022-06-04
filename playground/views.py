@@ -30,7 +30,9 @@ def hello(request):
 
 @decorators.api_view()
 def product_list(request):
-    return response.Response('hello')
+    product = Product.objects.all()
+    serializer = serializers.ProductSerializer(product, many=True)
+    return response.Response(serializer.data)
 
 
 @decorators.api_view()
