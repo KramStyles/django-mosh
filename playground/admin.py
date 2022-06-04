@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.db.models import Count
+from django.urls import reverse
+from django.utils.html import format_html, urlencode
 
 from . import models
 
@@ -35,7 +37,9 @@ class CollectionAdmin(admin.ModelAdmin):
 
     @admin.display(ordering='products_count')
     def products_count(self, collection):
-        return collection.products_count
+        params = urlencode({'collection__id': collection.id})
+        url = f"{reverse('admin:playground_product_changelist')}?{params}"
+        return format_html(f"<a href='{url}'>{collection.products_count}</a>")
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
