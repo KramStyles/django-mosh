@@ -8,9 +8,14 @@ admin.site.index_title = "E-commerce"
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['title', 'price']
+    list_display = ['title', 'price', 'inventory_status']
     list_editable = ['price']
-    list_per_page = 10
+    list_per_page = 30
+
+    def inventory_status(self, product):
+        if product.inventory < 20:
+            return f'Low: {product.inventory}'
+        return f'Available: {product.inventory}'
 
 
 @admin.register(models.Customer)
