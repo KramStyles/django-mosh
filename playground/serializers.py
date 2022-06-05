@@ -8,9 +8,11 @@ from . import models
 class ProductSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     title = serializers.CharField(max_length=200)
-    price = serializers.DecimalField(max_digits=6, decimal_places=2)
+    original_price = serializers.DecimalField(max_digits=6, decimal_places=2, source='price')
     description = serializers.CharField(max_length=20000)
     price_with_tax = serializers.SerializerMethodField(method_name='calculate_tax')
+    collection = serializers.StringRelatedField()  # Requires loading product and collections together
 
     def calculate_tax(self, product: models.Product):
-        return product.price * Decimal(1.2)
+        answer = product.price * Decimal(1.14)
+        return round(answer, 2)
