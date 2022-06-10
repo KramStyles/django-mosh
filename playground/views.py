@@ -38,11 +38,17 @@ def product_list(request):
         serializer = serializers.ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return response.Response('ok')
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@decorators.api_view()
+@decorators.api_view(['GET', 'PUT'])
 def product_detail(request, _id):
     product = get_object_or_404(Product, pk=_id)
-    serializer = serializers.ProductSerializer(product)
-    return response.Response(serializer.data, status=status.HTTP_200_OK)
+    if request.method == 'GET':
+        serializer = serializers.ProductSerializer(product)
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        serializer = serializers.ProductSerializer(product, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return response.Response(serializer.data, status=status.HTTP_202_ACCEPTED)

@@ -18,7 +18,7 @@ class ProductSerializer(serializers.ModelSerializer):
     original_price = serializers.DecimalField(max_digits=6, decimal_places=2, source='price')
     price_with_tax = serializers.SerializerMethodField(method_name='calculate_tax')
     # collection = serializers.StringRelatedField()  # Requires loading product and collections together
-    collection = CollectionSerializer()
+    # collection = CollectionSerializer()
 
     def calculate_tax(self, product: models.Product):
         answer = product.price * Decimal(1.14)
