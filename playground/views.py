@@ -28,11 +28,17 @@ def hello(request):
     return render(request, 'playground/index.html', context)
 
 
-@decorators.api_view()
+@decorators.api_view(['GET', 'POST'])
 def product_list(request):
-    product = Product.objects.select_related('collection').all()
-    serializer = serializers.ProductSerializer(product, many=True)
-    return response.Response(serializer.data)
+    if request.method == 'GET':
+        product = Product.objects.select_related('collection').all()
+        serializer = serializers.ProductSerializer(product, many=True)
+        return response.Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = serializers.ProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return response.Response('ok')
 
 
 @decorators.api_view()
