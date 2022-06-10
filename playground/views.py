@@ -41,7 +41,7 @@ def product_list(request):
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@decorators.api_view(['GET', 'PUT'])
+@decorators.api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def product_detail(request, _id):
     product = get_object_or_404(Product, pk=_id)
     if request.method == 'GET':
@@ -52,3 +52,11 @@ def product_detail(request, _id):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return response.Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    elif request.method == 'DELETE':
+        # to prevent exceptions that come from orderitems (check the orderItem class) foreign key
+        # The name order_items is from the related field
+        if product.order_items.count() > 0:
+            serializer = serializers.ProductSerializer(product)
+            return response.Response({'error': "This particular information cannot be deleted due to foreign key constraints!"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        product.delete()
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
