@@ -1,7 +1,8 @@
+from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 from rest_framework import decorators, response, status
 
-from .models import Customer, Product, OrderItem
+from .models import Customer, Product, OrderItem, Collection
 from . import serializers
 
 
@@ -60,3 +61,11 @@ def product_detail(request, _id):
             return response.Response({'error': "This particular information cannot be deleted due to foreign key constraints!"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         product.delete()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@decorators.api_view(['GET', 'POST'])
+def collection_list(request):
+    if request.method == 'GET':
+        queryset = Collection.objects.annotate(products_count=Count('product'))
+        serializer = serializers.CollectionSerializer(queryset, many=True)
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
