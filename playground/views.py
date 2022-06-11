@@ -69,3 +69,8 @@ def collection_list(request):
         queryset = Collection.objects.annotate(products_count=Count('product'))
         serializer = serializers.CollectionSerializer(queryset, many=True)
         return response.Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        serializer = serializers.CollectionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED)
