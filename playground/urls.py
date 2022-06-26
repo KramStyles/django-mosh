@@ -11,6 +11,6 @@ urlpatterns = [
     path('collections/<_id>/', views.collection_list),
 
     # CLASS BASED URLS
-    path('products/', views.ProductList.as_view()),
+    path('products/', views.ProductListCreate.as_view()),
     path('products/<_id>/', views.ProductDetail.as_view()),
 ]

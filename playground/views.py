@@ -6,6 +6,14 @@ from .models import Customer, Product, OrderItem, Collection
 from . import serializers
 
 
+class ProductListCreate(generics.ListCreateAPIView):
+    serializer_class = serializers.ProductSerializer
+    product = Product.objects.select_related('collection').all()
+
+    def get_queryset(self):
+        return self.product
+
+
 class ProductList(generics.GenericAPIView):
     def get(self, request):
         product = Product.objects.select_related('collection').all()
