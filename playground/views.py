@@ -1,9 +1,22 @@
 from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
-from rest_framework import decorators, response, status
+from rest_framework import decorators, response, status, generics
 
 from .models import Customer, Product, OrderItem, Collection
 from . import serializers
+
+
+class ProductList(generics.GenericAPIView):
+    def get(self, request):
+        product = Product.objects.select_related('collection').all()
+        serializer = serializers.ProductSerializer(product, many=True)
+        return response.Response(serializer.data)
+
+    def post(self, request):
+        serializer = serializers.ProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 def hello(request):
