@@ -38,8 +38,18 @@ def product_list(request):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
+
+    def get_queryset(self):
+        """
+        We want to apply filtering to this list
+        """
+        queryset = Product.objects.all()
+        collection_id = self.request.query_params.get('collection_id')
+        if collection_id:
+            queryset = queryset.filter(collection_id=collection_id)
+
+        return queryset
 
     def destroy(self, request, *args, **kwargs):
         products = OrderItem.objects.filter(product_id=kwargs['pk'])
@@ -196,5 +206,10 @@ class CollectionDetailApiView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
     serializer_class = serializers.ReviewSerializer
+
+    def get_queryset(self):
+        """
+        Using this in place of objects.all() so we can return reviews associated to a particular product
+        """
+        return Review.objects.filter(product_id=self.kwargs['product_pk'])

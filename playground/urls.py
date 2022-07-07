@@ -10,7 +10,7 @@ router = routers.DefaultRouter()
 # Using the default router would make the play url have a page of information and going to products.json would show
 # the json data
 
-router.register('products', views.ProductViewSet)
+router.register('products', views.ProductViewSet, basename='products')
 router.register('collections', views.CollectionViewset)
 
 product_router = routers.NestedDefaultRouter(router, 'products', lookup='product')
