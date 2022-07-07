@@ -4,7 +4,10 @@ from rest_framework.routers import SimpleRouter, DefaultRouter
 from . import views
 
 router = SimpleRouter()
-router = DefaultRouter()  # Using the default router would make the play url have a page of information
+router = DefaultRouter()
+
+# Using the default router would make the play url have a page of information and going to products.json would show
+# the json data
 
 router.register('products', views.ProductViewSet)
 router.register('collections', views.CollectionViewset)
