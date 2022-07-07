@@ -8,10 +8,10 @@ from . import serializers
 
 class ProductListCreate(generics.ListCreateAPIView):
     serializer_class = serializers.ProductSerializer
-    product = Product.objects.select_related('collection').all()
+    queryset = Product.objects.select_related('collection').all()
 
-    def get_queryset(self):
-        return self.product
+    # def get_queryset(self):
+    #     return self.product
 
 
 class ProductList(generics.GenericAPIView):
@@ -38,6 +38,20 @@ def product_list(request):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ProductDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = serializers.ProductSerializer
+    lookup_field = 'id'
+
+    def delete(self, request, _id):
+        product = get_object_or_404(Product, pk=_id)
+        if product.order_items.count() > 0:
+            serializer = self.serializer_class(product)
+            return response.Response({'error': "This particular information cannot be deleted due to foreign key constraints!"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        product.delete()
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProductDetail(generics.GenericAPIView):
@@ -106,6 +120,11 @@ def hello(request):
     }
 
     return render(request, 'playground/index.html', context)
+
+
+class CollectionList(generics.ListCreateAPIView):
+    queryset = Collection.objects.annotate(products_count=Count('products'))
+    serializer_class = serializers.CollectionSerializer
 
 
 @decorators.api_view(['GET', 'POST'])
