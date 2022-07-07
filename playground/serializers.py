@@ -24,3 +24,8 @@ class ProductSerializer(serializers.ModelSerializer):
         answer = product.price * Decimal(1.14)
         return round(answer, 2)
 
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Review
+        fields = '__all__'

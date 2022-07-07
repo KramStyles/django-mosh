@@ -2,7 +2,7 @@ from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 from rest_framework import decorators, response, status, generics, views, viewsets
 
-from .models import Customer, Product, OrderItem, Collection
+from .models import Customer, Product, OrderItem, Collection, Review
 from . import serializers
 
 
@@ -193,3 +193,8 @@ class CollectionDetailApiView(generics.RetrieveUpdateDestroyAPIView):
             return response.Response({'error': "Collection cannot be deleted because it includes one or more products"})
         collection.delete()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = serializers.ReviewSerializer
