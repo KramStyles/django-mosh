@@ -1,6 +1,6 @@
 from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
-from rest_framework import decorators, response, status, generics, views
+from rest_framework import decorators, response, status, generics, views, viewsets
 
 from .models import Customer, Product, OrderItem, Collection
 from . import serializers
@@ -9,9 +9,6 @@ from . import serializers
 class ProductListCreate(generics.ListCreateAPIView):
     serializer_class = serializers.ProductSerializer
     queryset = Product.objects.select_related('collection').all()
-
-    # def get_queryset(self):
-    #     return self.product
 
 
 class ProductList(generics.GenericAPIView):
@@ -40,13 +37,25 @@ def product_list(request):
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = serializers.ProductSerializer
+
+    def delete(self, request, *args, **kwargs):
+        product = get_object_or_404(Product, pk=kwargs['pk'])
+        if product.order_items.count() > 0:
+            serializer = self.serializer_class(product)
+            return response.Response({'error': "This particular information cannot be deleted due to foreign key constraints!"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        product.delete()
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class ProductDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
-    lookup_field = 'pk'
 
-    def delete(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
+    def delete(self, request, *args, **kwargs):
+        product = get_object_or_404(Product, pk=kwargs['pk'])
         if product.order_items.count() > 0:
             serializer = self.serializer_class(product)
             return response.Response({'error': "This particular information cannot be deleted due to foreign key constraints!"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -122,11 +131,6 @@ def hello(request):
     return render(request, 'playground/index.html', context)
 
 
-class CollectionList(generics.ListCreateAPIView):
-    queryset = Collection.objects.annotate(products_count=Count('products'))
-    serializer_class = serializers.CollectionSerializer
-
-
 @decorators.api_view(['GET', 'POST'])
 def collection_list(request):
     if request.method == 'GET':
@@ -159,6 +163,29 @@ def collection_detail(request, pk):
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class CollectionViewset(viewsets.ModelViewSet):
+    """
+    As you can see we are having duplications in all the codes dealing with collections.
+    i.e queryset and seralizer_class. The viewset helps to prevent such duplications.
+    We are supposed to move everything inside it and create routes to seperate them
+    """
+    queryset = Collection.objects.annotate(products_count=Count('products'))
+    serializer_class = serializers.CollectionSerializer
+
+    def delete(self, request, *args, **kwargs):
+        collection = get_object_or_404(Collection, pk=kwargs['pk'])
+
+        if collection.products.count() > 0:
+            return response.Response({'error': "Collection cannot be deleted because it includes one or more products"})
+        collection.delete()
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CollectionList(generics.ListCreateAPIView):
+    queryset = Collection.objects.annotate(products_count=Count('products'))
+    serializer_class = serializers.CollectionSerializer
+
+
 class CollectionDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Collection.objects.annotate(products_count=Count('products'))
     serializer_class = serializers.CollectionSerializer
@@ -169,4 +196,4 @@ class CollectionDetailApiView(generics.RetrieveUpdateDestroyAPIView):
         if collection.products.count() > 0:
             return response.Response({'error': "Collection cannot be deleted because it includes one or more products"})
         collection.delete()
-        return response.Response({'info', collection.products.count()}, status=status.HTTP_204_NO_CONTENT)
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
