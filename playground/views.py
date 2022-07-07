@@ -1,4 +1,5 @@
 from django.db.models import Count
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render, get_object_or_404
 from rest_framework import decorators, response, status, generics, views, viewsets
 
@@ -38,18 +39,21 @@ def product_list(request):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['collection_id']
 
-    def get_queryset(self):
-        """
-        We want to apply filtering to this list
-        """
-        queryset = Product.objects.all()
-        collection_id = self.request.query_params.get('collection_id')
-        if collection_id:
-            queryset = queryset.filter(collection_id=collection_id)
-
-        return queryset
+    # def get_queryset(self):
+    #     """
+    #     We want to apply filtering to this list without filter_backends
+    #     """
+    #     queryset = Product.objects.all()
+    #     collection_id = self.request.query_params.get('collection_id')
+    #     if collection_id:
+    #         queryset = queryset.filter(collection_id=collection_id)
+    #
+    #     return queryset
 
     def destroy(self, request, *args, **kwargs):
         products = OrderItem.objects.filter(product_id=kwargs['pk'])
