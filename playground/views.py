@@ -43,10 +43,10 @@ def product_list(request):
 class ProductDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
-    lookup_field = 'id'
+    lookup_field = 'pk'
 
-    def delete(self, request, _id):
-        product = get_object_or_404(Product, pk=_id)
+    def delete(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
         if product.order_items.count() > 0:
             serializer = self.serializer_class(product)
             return response.Response({'error': "This particular information cannot be deleted due to foreign key constraints!"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -157,3 +157,16 @@ def collection_detail(request, pk):
             return response.Response({'error': "Collection cannot be deleted because it includes one or more products"})
         collection.delete()
         return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CollectionDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Collection.objects.annotate(products_count=Count('products'))
+    serializer_class = serializers.CollectionSerializer
+
+    def delete(self, request, *args, **kwargs):
+        collection = get_object_or_404(Collection, pk=kwargs['pk'])
+
+        if collection.products.count() > 0:
+            return response.Response({'error': "Collection cannot be deleted because it includes one or more products"})
+        collection.delete()
+        return response.Response({'info', collection.products.count()}, status=status.HTTP_204_NO_CONTENT)

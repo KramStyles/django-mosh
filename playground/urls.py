@@ -12,7 +12,8 @@ urlpatterns = [
     # CLASS BASED URLS
     path('products/', views.ProductListCreate.as_view()),
     # path('products/<_id>/', views.ProductDetail.as_view()),
-    # path('products/<pk>/', views.ProductDetailApiView.as_view()),
-    path('products/<id>/', views.ProductDetailApiView.as_view()),
+    path('products/<pk>/', views.ProductDetailApiView.as_view()),
+    # path('products/<id>/', views.ProductDetailApiView.as_view()),
     path('collections_class/', views.CollectionList.as_view()),  # Better
+    path('collections_class/<pk>/', views.CollectionDetailApiView.as_view()),
 ]
