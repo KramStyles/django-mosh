@@ -5,6 +5,7 @@ from rest_framework import decorators, response, status, generics, views, viewse
 
 from .models import Customer, Product, OrderItem, Collection, Review
 from . import serializers
+from .filters import ProductFilter
 
 
 class ProductListCreate(generics.ListCreateAPIView):
@@ -42,7 +43,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['collection_id']
+    # filterset_fields = ['collection_id']
+    filterset_class = ProductFilter
 
     # def get_queryset(self):
     #     """
