@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     # PERSONAL APPS
     'playground.apps.PlaygroundConfig',
     'tags.apps.TagsConfig',
-    'store_custom.apps.StoreCustomConfig',
+    'core.apps.CoreConfig',
 
     # PIP INSTALLS
     'rest_framework',
