@@ -225,6 +225,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return Review.objects.filter(product_id=self.kwargs['product_pk'])
 
 
-class CartViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class CartViewSet(mixins.CreateModelMixin,
+                  mixins.RetrieveModelMixin,
+                  mixins.DestroyModelMixin,
+                  viewsets.GenericViewSet):
     queryset = Cart.objects.all()
     serializer_class = serializers.CartSerializer
