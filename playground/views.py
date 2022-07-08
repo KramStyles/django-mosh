@@ -1,7 +1,7 @@
 from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render, get_object_or_404
-from rest_framework import decorators, response, status, generics, views, viewsets
+from rest_framework import decorators, response, status, generics, views, viewsets, filters
 
 from .models import Customer, Product, OrderItem, Collection, Review
 from . import serializers
@@ -42,9 +42,11 @@ def product_list(request):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     # filterset_fields = ['collection_id']
     filterset_class = ProductFilter
+    search_fields = ['title', 'description']
+    ordering_fields = ['price']
 
     # def get_queryset(self):
     #     """
