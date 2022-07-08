@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render, get_object_or_404
 from rest_framework import decorators, response, status, generics, views, viewsets, filters, pagination, mixins
 
-from .models import Customer, Product, OrderItem, Collection, Review, Cart
+from .models import Customer, Product, OrderItem, Collection, Review, Cart, CartItem
 from . import serializers
 from .filters import ProductFilter
 
@@ -231,3 +231,16 @@ class CartViewSet(mixins.CreateModelMixin,
                   viewsets.GenericViewSet):
     queryset = Cart.objects.all()
     serializer_class = serializers.CartSerializer
+
+
+class CartItemViewSet(viewsets.ModelViewSet):
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return serializers.AddCartItemSerializer
+        return serializers.CartItemSerializer
+
+    def get_serializer_context(self):
+        return {'cart_id': self.kwargs['cart_pk']}
+
+    def get_queryset(self):
+        return CartItem.objects.filter(cart_id=self.kwargs['cart_pk'])
