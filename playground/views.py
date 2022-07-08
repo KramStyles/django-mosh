@@ -1,9 +1,9 @@
 from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render, get_object_or_404
-from rest_framework import decorators, response, status, generics, views, viewsets, filters, pagination
+from rest_framework import decorators, response, status, generics, views, viewsets, filters, pagination, mixins
 
-from .models import Customer, Product, OrderItem, Collection, Review
+from .models import Customer, Product, OrderItem, Collection, Review, Cart
 from . import serializers
 from .filters import ProductFilter
 
@@ -223,3 +223,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
         Using this in place of objects.all() so we can return reviews associated to a particular product
         """
         return Review.objects.filter(product_id=self.kwargs['product_pk'])
+
+
+class CartViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = serializers.CartSerializer
