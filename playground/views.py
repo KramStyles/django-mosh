@@ -261,11 +261,14 @@ class CustomerViewSet(CustomerMixins):
     queryset = Customer.objects.all()
     serializer_class = serializers.CustomerSerializer
 
-    @decorators.action(detail=False)
+    @decorators.action(detail=False, methods=['GET', 'PUT'])
     def me(self, request):
-        try:
-            customer = Customer.objects.get(user_id=request.user.id)
+        (customer, created) = Customer.objects.get_or_create(user_id=request.user.id)
+        if request.method == 'GET':
             serializer = self.serializer_class(customer)
             return response.Response(serializer.data)
-        except:
-            return response.Response('User is not a customer', status=status.HTTP_404_NOT_FOUND)        
+        elif request.method == 'PUT':
+            serializer = self.serializer_class(customer, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return response.Response(serializer.data)        
