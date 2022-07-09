@@ -248,3 +248,15 @@ class CartItemViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return CartItem.objects.filter(cart_id=self.kwargs['cart_pk'])
+
+
+class CustomerMixins(mixins.CreateModelMixin,
+                     mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     viewsets.GenericViewSet):
+    pass
+
+
+class CustomerViewSet(CustomerMixins):
+    queryset = Customer.objects.all()
+    serializer_class = serializers.CustomerSerializer
