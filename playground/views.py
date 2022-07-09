@@ -260,3 +260,12 @@ class CustomerMixins(mixins.CreateModelMixin,
 class CustomerViewSet(CustomerMixins):
     queryset = Customer.objects.all()
     serializer_class = serializers.CustomerSerializer
+
+    @decorators.action(detail=False)
+    def me(self, request):
+        try:
+            customer = Customer.objects.get(user_id=request.user.id)
+            serializer = self.serializer_class(customer)
+            return response.Response(serializer.data)
+        except:
+            return response.Response('User is not a customer', status=status.HTTP_404_NOT_FOUND)        
