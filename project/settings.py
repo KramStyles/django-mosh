@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'debug_toolbar',
     'django_filters',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -137,6 +138,12 @@ REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,  # To make decimals return as decimals
     'PAGE_SIZE': 10,
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination', #  sets pagination on all data
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',)
+}
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 AUTH_USER_MODEL = 'core.User'
