@@ -105,4 +105,9 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Customer
         fields = ['id', 'user_id', 'phone', 'birthdate', 'membership']
-# For a comit
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Order
+        fields = '__all__'
