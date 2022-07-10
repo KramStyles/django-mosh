@@ -1,10 +1,11 @@
 from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render, get_object_or_404
-from rest_framework import decorators, response, status, generics, views, viewsets, filters, pagination, mixins
+from rest_framework import decorators, response, status, generics, views, viewsets, filters, pagination, mixins, permissions
 
 from .models import Customer, Product, OrderItem, Collection, Review, Cart, CartItem
 from . import serializers
+from .permissions import IsAdminOrReadOnly
 from .filters import ProductFilter
 
 
@@ -49,6 +50,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering_fields = ['price']
     search_fields = ['title', 'description']
     pagination_class = pagination.LimitOffsetPagination
+    permission_classes = [IsAdminOrReadOnly]
 
     # def get_queryset(self):
     #     """
@@ -189,6 +191,7 @@ class CollectionViewset(viewsets.ModelViewSet):
     """
     queryset = Collection.objects.annotate(products_count=Count('products'))
     serializer_class = serializers.CollectionSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
     def destroy(self, request, *args, **kwargs):
         collection = OrderItem.objects.filter(product_id=kwargs['pk'])
@@ -250,18 +253,24 @@ class CartItemViewSet(viewsets.ModelViewSet):
         return CartItem.objects.filter(cart_id=self.kwargs['cart_pk'])
 
 
-class CustomerMixins(mixins.CreateModelMixin,
-                     mixins.RetrieveModelMixin,
-                     mixins.UpdateModelMixin,
-                     viewsets.GenericViewSet):
-    pass
+# class CustomerMixins(mixins.CreateModelMixin,
+#                      mixins.RetrieveModelMixin,
+#                      mixins.UpdateModelMixin,
+#                      viewsets.GenericViewSet):
+#     pass
 
 
-class CustomerViewSet(CustomerMixins):
+class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = serializers.CustomerSerializer
+    permission_classes = [permissions.IsAdminUser]
 
-    @decorators.action(detail=False, methods=['GET', 'PUT'])
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
+
+    @decorators.action(detail=False, methods=['GET', 'PUT'], permission_classes=[permissions.IsAuthenticated])
     def me(self, request):
         (customer, created) = Customer.objects.get_or_create(user_id=request.user.id)
         if request.method == 'GET':
