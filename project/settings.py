@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,13 +39,14 @@ INSTALLED_APPS = [
     # PERSONAL APPS
     'playground.apps.PlaygroundConfig',
     'tags.apps.TagsConfig',
-    'store_custom.apps.StoreCustomConfig',
+    'core.apps.CoreConfig',
 
     # PIP INSTALLS
     'rest_framework',
     'drf_yasg',
     'debug_toolbar',
     'django_filters',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -112,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -136,5 +137,21 @@ INTERNAL_IPS = [
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,  # To make decimals return as decimals
     'PAGE_SIZE': 10,
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination', #  sets pagination on all data
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  # sets pagination on all data
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',)
 }
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=10)
+}
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'core.serializers.UserCreateSerializer',
+        'current_user': 'core.serializers.UserSerializer',
+    }
+}
+
+AUTH_USER_MODEL = 'core.User'

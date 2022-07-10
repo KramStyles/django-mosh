@@ -39,6 +39,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('play/', include('playground.urls')),
     path('__debug__/', include(debug_toolbar.urls)),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
 
     # SWAGGER DOCUMENTATION
     path('swagger.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
