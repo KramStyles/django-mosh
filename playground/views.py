@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render, get_object_or_404
 from rest_framework import decorators, response, status, generics, views, viewsets, filters, pagination, mixins, permissions
 
-from .models import Customer, Product, OrderItem, Collection, Review, Cart, CartItem
+from .models import Customer, Product, OrderItem, Collection, Review, Cart, CartItem, Order
 from . import serializers
 from .permissions import IsAdminOrReadOnly
 from .filters import ProductFilter
@@ -281,3 +281,27 @@ class CustomerViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return response.Response(serializer.data)        
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_context(self):
+        return {'user_id': self.request.user.id}
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return serializers.CreateOrderSerializer
+        return serializers.OrderSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff:
+            return Order.objects.all()
+
+        (customer_id, created) = Customer.objects.only('id').get_or_create(user_id=user.id)
+        return Order.objects.filter(customer_id=customer_id)
+    
+    
