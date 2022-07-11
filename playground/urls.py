@@ -14,7 +14,7 @@ router.register('products', views.ProductViewSet, basename='products')
 router.register('collections', views.CollectionViewset)
 router.register('carts', views.CartViewSet)
 router.register('customers', views.CustomerViewSet)
-router.register('orders', views.OrderViewSet)
+router.register('orders', views.OrderViewSet, basename='orders') # You include basename when you overwrite queryset
 
 product_router = routers.NestedDefaultRouter(router, 'products', lookup='product')
 product_router.register('reviews', views.ReviewViewSet, basename='product-reviews')
